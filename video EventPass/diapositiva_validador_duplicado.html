@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventPass – Entrada Duplicada</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0f1e;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #1f0a0a 0%, #0a0f1e 70%);
+      overflow: hidden;
+    }
+
+    /* Fondo con puntos sutiles */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(220, 50, 50, 0.09) 1px, transparent 1px),
+        radial-gradient(circle, rgba(220, 50, 50, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px, 90px 90px;
+      background-position: 0 0, 30px 30px;
+    }
+
+    /* Flash de alerta – parpadeo suave rojo en el fondo */
+    .alert-flash {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(200, 30, 30, 0.12) 0%, transparent 65%);
+      animation: alertFlash 2.4s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes alertFlash {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+
+    /* Líneas decorativas – rojo error */
+    .accent-line-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #6b0000, #dc3232, #ff6b6b, #dc3232, #6b0000);
+      z-index: 3;
+    }
+
+    .accent-line-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #dc3232, #6b0000, #dc3232);
+      z-index: 3;
+    }
+
+    /* Círculos decorativos de fondo */
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+    .circle-bg.c1 {
+      width: 700px; height: 700px;
+      background: #dc3232;
+      opacity: 0.06;
+      top: -200px; left: -150px;
+    }
+    .circle-bg.c2 {
+      width: 500px; height: 500px;
+      background: #6b0000;
+      opacity: 0.09;
+      bottom: -120px; right: -100px;
+    }
+    .circle-bg.c3 {
+      width: 280px; height: 280px;
+      background: #ff6b6b;
+      opacity: 0.04;
+      top: 25%; left: 65%;
+    }
+
+    /* Contenido central */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3.2vh;
+      text-align: center;
+      padding: 0 6vw;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 0.5vh;
+    }
+
+    .logo-icon {
+      width: 64px;
+      height: 64px;
+      margin-right: 18px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-event { color: #2B5EA7; }
+    .logo-pass  { color: #4DBB5F; }
+
+    /* Etiqueta de escena */
+    .role-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5vh;
+    }
+
+    .role-line {
+      width: 50px;
+      height: 1px;
+      background: rgba(220, 50, 50, 0.45);
+    }
+
+    .role-tag {
+      font-size: clamp(11px, 1.1vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #ff6b6b;
+    }
+
+    /* Separador */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #6b0000, #ff6b6b);
+      border-radius: 2px;
+      margin: 0 auto;
+    }
+
+    /* Texto principal */
+    .welcome-text {
+      font-size: clamp(20px, 2.6vw, 38px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.55;
+      max-width: 860px;
+      letter-spacing: 0.01em;
+    }
+
+    .welcome-text strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .welcome-text .highlight-red {
+      font-weight: 700;
+      color: #ff6b6b;
+    }
+
+    /* Tarjeta de error central */
+    .error-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(220, 50, 50, 0.1);
+      border: 1.5px solid rgba(220, 50, 50, 0.35);
+      border-radius: 14px;
+      padding: 14px 28px;
+      margin-top: 0.2vh;
+    }
+
+    .error-icon {
+      flex-shrink: 0;
+      animation: iconShake 3s ease-in-out infinite;
+    }
+
+    @keyframes iconShake {
+      0%, 85%, 100% { transform: rotate(0deg); }
+      88%           { transform: rotate(-6deg); }
+      91%           { transform: rotate(6deg); }
+      94%           { transform: rotate(-4deg); }
+      97%           { transform: rotate(4deg); }
+    }
+
+    .error-card-text {
+      text-align: left;
+    }
+
+    .error-title {
+      font-size: clamp(13px, 1.3vw, 19px);
+      font-weight: 700;
+      color: #ff6b6b;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .error-sub {
+      font-size: clamp(11px, 1vw, 15px);
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 400;
+      margin-top: 3px;
+      letter-spacing: 0.02em;
+    }
+
+    /* Tarjetas de detalle */
+    .caps {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .cap-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(220, 50, 50, 0.07);
+      border: 1px solid rgba(220, 50, 50, 0.2);
+      border-radius: 10px;
+      padding: 9px 18px;
+    }
+
+    .cap-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #dc3232;
+      flex-shrink: 0;
+    }
+
+    .cap-text {
+      font-size: clamp(11px, 1vw, 15px);
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* Badge */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(220, 50, 50, 0.1);
+      border: 1px solid rgba(220, 50, 50, 0.28);
+      border-radius: 100px;
+      padding: 10px 24px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #dc3232;
+      box-shadow: 0 0 8px #dc3232;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    .badge-text {
+      font-size: clamp(12px, 1.2vw, 18px);
+      color: rgba(255,255,255,0.5);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Icono decorativo esquina: QR tachado */
+    .deco-icon {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      opacity: 0.07;
+    }
+
+    /* Crédito */
+    .credit {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 0.9vw, 14px);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="accent-line-top"></div>
+    <div class="accent-line-bottom"></div>
+    <div class="alert-flash"></div>
+
+    <div class="circle-bg c1"></div>
+    <div class="circle-bg c2"></div>
+    <div class="circle-bg c3"></div>
+
+    <!-- Icono decorativo: QR con X encima -->
+    <svg class="deco-icon" width="220" height="220" viewBox="0 0 100 100" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5"  y="5"  width="35" height="35" rx="4" fill="none" stroke="white" stroke-width="4"/>
+      <rect x="14" y="14" width="17" height="17" rx="1"/>
+      <rect x="60" y="5"  width="35" height="35" rx="4" fill="none" stroke="white" stroke-width="4"/>
+      <rect x="69" y="14" width="17" height="17" rx="1"/>
+      <rect x="5"  y="60" width="35" height="35" rx="4" fill="none" stroke="white" stroke-width="4"/>
+      <rect x="14" y="69" width="17" height="17" rx="1"/>
+      <rect x="60" y="60" width="6" height="6"/>
+      <rect x="70" y="60" width="6" height="6"/>
+      <rect x="80" y="60" width="6" height="6"/>
+      <rect x="60" y="70" width="6" height="6"/>
+      <rect x="80" y="70" width="6" height="6"/>
+      <rect x="60" y="80" width="6" height="6"/>
+      <rect x="70" y="80" width="6" height="6"/>
+      <!-- X grande encima -->
+      <line x1="10" y1="10" x2="90" y2="90" stroke="white" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+      <line x1="90" y1="10" x2="10" y2="90" stroke="white" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+    </svg>
+
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0d1b3e"/>
+          <rect x="8"  y="8"  width="20" height="20" rx="4" fill="#2B5EA7"/>
+          <rect x="36" y="8"  width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="8"  y="36" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="36" y="36" width="20" height="20" rx="4" fill="#4DBB5F"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-event">Event</span><span class="logo-pass">Pass</span>
+        </div>
+      </div>
+
+      <!-- Etiqueta escena -->
+      <div class="role-label">
+        <div class="role-line"></div>
+        <span class="role-tag">Validador · Entrada Duplicada</span>
+        <div class="role-line"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texto principal -->
+      <p class="welcome-text">
+        El sistema detecta una entrada
+        <span class="highlight-red">ya utilizada</span><br>
+        e impide el <strong>acceso duplicado</strong>.
+      </p>
+
+      <!-- Tarjeta de error -->
+      <div class="error-card">
+        <svg class="error-icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="16" stroke="#dc3232" stroke-width="2.5"/>
+          <line x1="12" y1="12" x2="24" y2="24" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="24" y1="12" x2="12" y2="24" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="error-card-text">
+          <div class="error-title">Entrada ya utilizada</div>
+          <div class="error-sub">Este código QR fue escaneado anteriormente — acceso denegado</div>
+        </div>
+      </div>
+
+      <!-- Capacidades -->
+      <div class="caps">
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">QR marcado como usado</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Acceso denegado</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Intento de duplicado</span></div>
+      </div>
+
+      <!-- Badge -->
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Control anti-duplicado · EventPass</span>
+      </div>
+    </div>
+
+    <div class="credit">IES Palomeras-Vallecas · DAM 2026 · Alejandro &amp; Jeddy</div>
+  </div>
+</body>
+</html>

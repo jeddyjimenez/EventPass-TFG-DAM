@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/eventos}">Eventos</a>
+        <a th:href="@{/admin/eventos}">Mis eventos</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Cerrar sesión</a>
+    </nav>
+
+    <h1>Dashboard de administración</h1>
+
+    <section>
+        <h2>Total de eventos</h2>
+        <p th:text="${totalEventos}">0</p>
+    </section>
+
+    <section>
+        <h2>Eventos publicados</h2>
+        <p th:text="${eventosPublicados}">0</p>
+    </section>
+
+    <section>
+        <h2>Entradas vendidas</h2>
+        <p th:text="${entradasVendidas}">0</p>
+    </section>
+
+    <section>
+        <h2>Entradas usadas</h2>
+        <p th:text="${entradasUsadas}">0</p>
+    </section>
+
+    <p><a th:href="@{/admin/eventos}">Ir a gestión de eventos</a></p>
+</body>
+</html>

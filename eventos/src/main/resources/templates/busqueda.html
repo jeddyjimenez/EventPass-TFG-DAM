@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Eventos | EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <style>
+        .busqueda-panel {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .busqueda-titulo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 0.75rem;
+        }
+
+        .busqueda-titulo .lupa {
+            font-size: 1.3rem;
+        }
+
+        .filtros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            align-items: end;
+        }
+
+        .filtro-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .filtro-grupo label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .filtro-grupo input,
+        .filtro-grupo select {
+            padding: 0.55rem 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            background: var(--bg-color);
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        .filtro-grupo input:focus,
+        .filtro-grupo select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn-buscar {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.6rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background-color 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        .btn-buscar:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-limpiar {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-limpiar:hover {
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .botones-busqueda {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Resultados */
+        .resultados-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .resultados-count {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .resultado-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 0;
+            overflow: hidden;
+            transition: transform 0.2s;
+            margin-bottom: 1.2rem;
+        }
+
+        .resultado-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .resultado-img {
+            width: 160px;
+            min-height: 140px;
+            flex-shrink: 0;
+            background-color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .resultado-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .resultado-body {
+            padding: 1.2rem 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .resultado-titulo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.3rem;
+        }
+
+        .resultado-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.88rem;
+            color: var(--text-light);
+            margin-bottom: 0.6rem;
+        }
+
+        .resultado-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .resultado-desc {
+            color: var(--text-color);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+
+        .badge-tipo {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            margin-bottom: 0.5rem;
+        }
+
+        .sin-resultados {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        .sin-resultados .icono {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .placeholder-busqueda {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        .placeholder-busqueda .icono {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        @media (max-width: 600px) {
+            .resultado-card {
+                flex-direction: column;
+            }
+            .resultado-img {
+                width: 100%;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container">
+        <!-- Título de sección -->
+        <div class="admin-header" style="margin-bottom: 1.5rem;">
+            <div>
+                <h1>Búsqueda de Eventos</h1>
+                <p style="color: var(--text-light);">Encuentra el evento perfecto para ti.</p>
+            </div>
+        </div>
+
+        <!-- Panel de filtros -->
+        <div class="busqueda-panel">
+            <div class="busqueda-titulo">
+                <span class="lupa">🔍</span> Búsqueda y filtrado
+            </div>
+            <form method="get" th:action="@{/busqueda}">
+                <div class="filtros-grid">
+
+                    <!-- Nombre -->
+                    <div class="filtro-grupo" style="grid-column: span 2;">
+                        <label for="nombre">Buscar por nombre del evento</label>
+                        <input type="text" id="nombre" name="nombre"
+                               th:value="${nombre}"
+                               placeholder="Ej.: concierto, festival, Madrid..." />
+                    </div>
+
+                    <!-- Tipo de evento -->
+                    <div class="filtro-grupo">
+                        <label for="tipo">Tipo de evento</label>
+                        <select id="tipo" name="tipo">
+                            <option value="">Todos los tipos</option>
+                            <option th:each="t : ${tiposEvento}"
+                                    th:value="${t}"
+                                    th:text="${t.name().charAt(0) + t.name().substring(1).toLowerCase()}"
+                                    th:selected="${tipo != null && tipo == t}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Ciudad -->
+                    <div class="filtro-grupo">
+                        <label for="ciudad">Ciudad / Ubicación</label>
+                        <input type="text" id="ciudad" name="ciudad"
+                               th:value="${ciudad}"
+                               placeholder="Ej.: Valencia, Madrid..." />
+                    </div>
+
+                    <!-- Fecha desde -->
+                    <div class="filtro-grupo">
+                        <label for="fechaDesde">Desde</label>
+                        <input type="date" id="fechaDesde" name="fechaDesde"
+                               th:value="${fechaDesde}" />
+                    </div>
+
+                    <!-- Fecha hasta -->
+                    <div class="filtro-grupo">
+                        <label for="fechaHasta">Hasta</label>
+                        <input type="date" id="fechaHasta" name="fechaHasta"
+                               th:value="${fechaHasta}" />
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="filtro-grupo" style="grid-column: span 2;">
+                        <label>&nbsp;</label>
+                        <div class="botones-busqueda">
+                            <button type="submit" class="btn-buscar">
+                                🔍 Aplicar filtros
+                            </button>
+                            <a th:href="@{/busqueda}" class="btn-limpiar">Limpiar</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resultados -->
+        <div th:if="${busquedaRealizada}">
+            <div class="resultados-header">
+                <h2 style="font-size: 1.1rem; margin-bottom: 0;">Resultados</h2>
+                <span class="resultados-count"
+                      th:text="${#lists.size(resultados)} + ' evento(s) encontrado(s)'">
+                </span>
+            </div>
+
+            <!-- Sin resultados -->
+            <div th:if="${#lists.isEmpty(resultados)}" class="sin-resultados">
+                <div class="icono">😕</div>
+                <p style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">
+                    No se encontraron eventos
+                </p>
+                <p>Prueba con otros filtros o amplía el rango de fechas.</p>
+            </div>
+
+            <!-- Lista de resultados -->
+            <div th:each="evento : ${resultados}" class="resultado-card">
+                <div class="resultado-img">
+                    <img th:if="${evento.imagenUrl != null}"
+                         th:src="${evento.imagenUrl}"
+                         th:alt="${evento.nombre}" />
+                    <span th:if="${evento.imagenUrl == null}">Sin imagen</span>
+                </div>
+                <div class="resultado-body">
+                    <div>
+                        <span th:if="${evento.tipo != null}" class="badge-tipo"
+                              th:text="${evento.tipo.name().charAt(0) + evento.tipo.name().substring(1).toLowerCase()}">
+                        </span>
+                        <div class="resultado-titulo" th:text="${evento.nombre}">Nombre</div>
+                        <div class="resultado-meta">
+                            <span>📅 <span th:text="${#temporals.format(evento.fechaInicio, 'dd/MM/yyyy HH:mm')}"></span></span>
+                            <span>📍 <span th:text="${evento.ubicacion}"></span></span>
+                        </div>
+                        <p class="resultado-desc"
+                           th:text="${#strings.abbreviate(evento.descripcion, 150)}">
+                        </p>
+                    </div>
+                    <div>
+                        <a th:href="@{/eventos/{id}(id=${evento.id})}"
+                           class="btn btn-primary">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado inicial: sin búsqueda -->
+        <div th:if="${!busquedaRealizada}" class="placeholder-busqueda">
+            <div class="icono">🎟️</div>
+            <p style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">
+                Usa los filtros para encontrar eventos
+            </p>
+            <p>Busca por nombre, tipo, ciudad o fechas.</p>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

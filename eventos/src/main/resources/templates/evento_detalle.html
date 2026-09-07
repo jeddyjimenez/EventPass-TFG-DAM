@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Evento | EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container">
+        <div class="event-detail-card">
+            <h1 th:text="${evento.nombre}" style="margin-bottom: 0.5rem; color: var(--primary-color);">Nombre del Evento</h1>
+
+            <div th:if="${evento.imagenUrl != null}" style="margin-bottom: 1.25rem;">
+                <img th:src="${evento.imagenUrl}" th:alt="${'Imagen de ' + evento.nombre}" class="event-detail-image">
+            </div>
+
+            <div class="event-meta">
+                <p><strong>Ubicación:</strong> <span th:text="${evento.ubicacion}">Ubicación</span></p>
+                <p><strong>Fecha de Inicio:</strong> <span th:text="${#temporals.format(evento.fechaInicio, 'dd/MM/yyyy HH:mm')}">Inicio</span></p>
+                <p><strong>Fecha de Fin:</strong> <span th:text="${#temporals.format(evento.fechaFin, 'dd/MM/yyyy HH:mm')}">Fin</span></p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3>Acerca del Evento</h3>
+                <p th:text="${evento.descripcion}" style="white-space: pre-line;">Descripción larga del evento.</p>
+            </div>
+
+            <div th:if="${param.ok}" style="background-color: var(--success-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                ¡Reserva realizada correctamente! Te esperamos en el evento.
+            </div>
+            <div th:if="${param.error != null and #lists.contains(param.error, 'no-publicado')}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                Este evento no está publicado y no se puede reservar.
+            </div>
+            <div th:if="${param.error != null and #lists.contains(param.error, 'yareservado')}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                Ya tienes una reserva activa para este evento.
+            </div>
+            <div th:if="${param.error != null and #lists.contains(param.error, 'aforo-completo')}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                Lo sentimos, el aforo para este evento está completo.
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <form method="post" th:action="@{/eventos/{id}/reservar(id=${evento.id})}">
+                    <button type="submit" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.75rem 2rem;">Reservar Entrada</button>
+                </form>
+                <a th:href="@{/eventos}" class="btn btn-outline">Volver a Eventos</a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

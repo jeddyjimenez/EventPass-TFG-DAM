@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventPass – Contacto</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0f1e;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #130d24 0%, #0a0f1e 70%);
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(124, 92, 191, 0.09) 1px, transparent 1px),
+        radial-gradient(circle, rgba(124, 92, 191, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px, 90px 90px;
+      background-position: 0 0, 30px 30px;
+    }
+
+    .accent-line-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3d1f78, #7c5cbf, #b39ddb, #7c5cbf, #3d1f78);
+      z-index: 3;
+    }
+
+    .accent-line-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #7c5cbf, #3d1f78, #7c5cbf);
+      z-index: 3;
+    }
+
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+    .circle-bg.c1 {
+      width: 700px; height: 700px;
+      background: #7c5cbf;
+      opacity: 0.07;
+      top: -200px; left: -150px;
+    }
+    .circle-bg.c2 {
+      width: 500px; height: 500px;
+      background: #3d1f78;
+      opacity: 0.09;
+      bottom: -120px; right: -100px;
+    }
+    .circle-bg.c3 {
+      width: 280px; height: 280px;
+      background: #b39ddb;
+      opacity: 0.04;
+      top: 25%; left: 65%;
+    }
+
+    /* Contenido central */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.8vh;
+      text-align: center;
+      padding: 0 5vw;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.2vh;
+    }
+
+    .logo-icon {
+      width: 56px;
+      height: 56px;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: clamp(44px, 6vw, 84px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-event { color: #2B5EA7; }
+    .logo-pass  { color: #4DBB5F; }
+
+    /* Etiqueta de escena */
+    .role-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.2vh;
+    }
+
+    .role-line {
+      width: 50px;
+      height: 1px;
+      background: rgba(124, 92, 191, 0.45);
+    }
+
+    .role-tag {
+      font-size: clamp(11px, 1.1vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #b39ddb;
+    }
+
+    /* Separador */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #3d1f78, #b39ddb);
+      border-radius: 2px;
+    }
+
+    /* Texto principal */
+    .welcome-text {
+      font-size: clamp(18px, 2.3vw, 34px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.55;
+      max-width: 860px;
+      letter-spacing: 0.01em;
+    }
+
+    .welcome-text strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* ── TARJETAS DE CONTACTO ── */
+    .contact-cards {
+      display: flex;
+      gap: 18px;
+      margin-top: 0.4vh;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .contact-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: rgba(124, 92, 191, 0.07);
+      border: 1px solid rgba(124, 92, 191, 0.2);
+      border-radius: 16px;
+      padding: 20px 26px;
+      min-width: 150px;
+      position: relative;
+      overflow: hidden;
+      animation: cardIn 1.4s ease forwards;
+      opacity: 0;
+    }
+
+    .contact-card:nth-child(1) { animation-delay: 0.3s; }
+    .contact-card:nth-child(2) { animation-delay: 0.55s; }
+    .contact-card:nth-child(3) { animation-delay: 0.8s; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #7c5cbf, #b39ddb);
+      border-radius: 16px 16px 0 0;
+    }
+
+    .contact-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(124, 92, 191, 0.15);
+      border: 1px solid rgba(124, 92, 191, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contact-label {
+      font-size: clamp(10px, 0.95vw, 14px);
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .contact-value {
+      font-size: clamp(12px, 1.1vw, 16px);
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    /* Formulario decorativo */
+    .form-hint {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(124, 92, 191, 0.06);
+      border: 1px solid rgba(124, 92, 191, 0.18);
+      border-radius: 12px;
+      padding: 12px 22px;
+      margin-top: 0.2vh;
+    }
+
+    .form-hint-text {
+      font-size: clamp(12px, 1.1vw, 16px);
+      color: rgba(255,255,255,0.5);
+      font-weight: 300;
+      letter-spacing: 0.03em;
+    }
+
+    .form-hint-text strong {
+      color: #b39ddb;
+      font-weight: 600;
+    }
+
+    /* Badge */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(124, 92, 191, 0.1);
+      border: 1px solid rgba(124, 92, 191, 0.28);
+      border-radius: 100px;
+      padding: 10px 24px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #b39ddb;
+      box-shadow: 0 0 8px #7c5cbf;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    .badge-text {
+      font-size: clamp(12px, 1.2vw, 18px);
+      color: rgba(255,255,255,0.5);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Icono decorativo esquina: sobre/mensaje */
+    .deco-icon {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      opacity: 0.06;
+    }
+
+    /* Crédito */
+    .credit {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 0.9vw, 14px);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="accent-line-top"></div>
+    <div class="accent-line-bottom"></div>
+
+    <div class="circle-bg c1"></div>
+    <div class="circle-bg c2"></div>
+    <div class="circle-bg c3"></div>
+
+    <!-- Icono decorativo: sobre grande -->
+    <svg class="deco-icon" width="230" height="180" viewBox="0 0 115 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="12" width="107" height="68" rx="8" stroke="white" stroke-width="3.5"/>
+      <polyline points="4,12 57.5,54 111,12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="4"   y1="80" x2="40"  y2="48" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+      <line x1="111" y1="80" x2="75"  y2="48" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+    </svg>
+
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0d1b3e"/>
+          <rect x="8"  y="8"  width="20" height="20" rx="4" fill="#2B5EA7"/>
+          <rect x="36" y="8"  width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="8"  y="36" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="36" y="36" width="20" height="20" rx="4" fill="#4DBB5F"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-event">Event</span><span class="logo-pass">Pass</span>
+        </div>
+      </div>
+
+      <!-- Etiqueta escena -->
+      <div class="role-label">
+        <div class="role-line"></div>
+        <span class="role-tag">Pestaña · Contacto</span>
+        <div class="role-line"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texto principal -->
+      <p class="welcome-text">
+        Los usuarios pueden <strong>contactar</strong> con el equipo<br>
+        directamente desde la plataforma.
+      </p>
+
+      <!-- Tarjetas de contacto -->
+      <div class="contact-cards">
+
+        <div class="contact-card">
+          <div class="contact-icon-wrap">
+            <!-- icono email -->
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <rect x="2" y="5" width="18" height="13" rx="2.5" stroke="#b39ddb" stroke-width="1.7"/>
+              <polyline points="2,5 11,13 20,5" stroke="#b39ddb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">soporte@eventpass.es</div>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon-wrap">
+            <!-- icono teléfono -->
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M4 3.5C4 3.5 5.5 2 7 3.5L9 6C10 7 9 8.5 8 9.5C9.5 12 13 14.5 14.5 13.5C15.5 12.5 17 11.5 18 12.5L20 14.5C21.5 16 20 17.5 20 17.5C15 23 -1 7 4 3.5Z" stroke="#b39ddb" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="contact-label">Teléfono</div>
+          <div class="contact-value">+34 900 123 456</div>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon-wrap">
+            <!-- icono mensaje/formulario -->
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <rect x="2" y="3" width="18" height="13" rx="2.5" stroke="#b39ddb" stroke-width="1.7"/>
+              <path d="M2 16L6 19V16" stroke="#b39ddb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="6" y1="8" x2="16" y2="8" stroke="#b39ddb" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>
+              <line x1="6" y1="11" x2="13" y2="11" stroke="#b39ddb" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="contact-label">Formulario</div>
+          <div class="contact-value">Envío directo en web</div>
+        </div>
+
+      </div>
+
+      <!-- Pista de formulario -->
+      <div class="form-hint">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="6.5" stroke="#7c5cbf" stroke-width="1.5"/>
+          <line x1="8" y1="7" x2="8" y2="11" stroke="#b39ddb" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="8" cy="5" r="0.8" fill="#b39ddb"/>
+        </svg>
+        <span class="form-hint-text">El formulario de contacto envía el mensaje <strong>directamente al equipo</strong></span>
+      </div>
+
+      <!-- Badge -->
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Soporte al usuario · EventPass</span>
+      </div>
+    </div>
+
+    <div class="credit">IES Palomeras-Vallecas · DAM 2026 · Alejandro &amp; Jeddy</div>
+  </div>
+</body>
+</html>

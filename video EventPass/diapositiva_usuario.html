@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventPass – Rol Usuario</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0f1e;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #0b1f14 0%, #0a0f1e 70%);
+      overflow: hidden;
+    }
+
+    /* Fondo con puntos sutiles */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(77, 187, 95, 0.09) 1px, transparent 1px),
+        radial-gradient(circle, rgba(77, 187, 95, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px, 90px 90px;
+      background-position: 0 0, 30px 30px;
+    }
+
+    /* Línea decorativa superior – verde para usuario */
+    .accent-line-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1e6b2e, #4DBB5F, #7ad98a, #4DBB5F, #1e6b2e);
+    }
+
+    .accent-line-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #4DBB5F, #1e6b2e, #4DBB5F);
+    }
+
+    /* Círculos decorativos de fondo */
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+    .circle-bg.c1 {
+      width: 700px; height: 700px;
+      background: #4DBB5F;
+      opacity: 0.06;
+      top: -200px; left: -150px;
+    }
+    .circle-bg.c2 {
+      width: 500px; height: 500px;
+      background: #1e6b2e;
+      opacity: 0.08;
+      bottom: -120px; right: -100px;
+    }
+    .circle-bg.c3 {
+      width: 280px; height: 280px;
+      background: #7ad98a;
+      opacity: 0.04;
+      top: 25%; left: 65%;
+    }
+
+    /* Contenido central */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3.2vh;
+      text-align: center;
+      padding: 0 6vw;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 0.5vh;
+    }
+
+    .logo-icon {
+      width: 64px;
+      height: 64px;
+      margin-right: 18px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-event { color: #2B5EA7; }
+    .logo-pass  { color: #4DBB5F; }
+
+    /* Etiqueta de rol */
+    .role-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5vh;
+    }
+
+    .role-line {
+      width: 50px;
+      height: 1px;
+      background: rgba(77, 187, 95, 0.4);
+    }
+
+    .role-tag {
+      font-size: clamp(11px, 1.1vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #4DBB5F;
+    }
+
+    /* Separador */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #1e6b2e, #7ad98a);
+      border-radius: 2px;
+      margin: 0 auto;
+    }
+
+    /* Texto principal */
+    .welcome-text {
+      font-size: clamp(20px, 2.6vw, 38px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.55;
+      max-width: 860px;
+      letter-spacing: 0.01em;
+    }
+
+    .welcome-text strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* Tarjetas de capacidades del usuario */
+    .caps {
+      display: flex;
+      gap: 16px;
+      margin-top: 0.5vh;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .cap-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(77, 187, 95, 0.08);
+      border: 1px solid rgba(77, 187, 95, 0.22);
+      border-radius: 10px;
+      padding: 9px 18px;
+    }
+
+    .cap-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4DBB5F;
+      flex-shrink: 0;
+    }
+
+    .cap-text {
+      font-size: clamp(11px, 1vw, 15px);
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* Badge */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(77, 187, 95, 0.1);
+      border: 1px solid rgba(77, 187, 95, 0.25);
+      border-radius: 100px;
+      padding: 10px 24px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4DBB5F;
+      box-shadow: 0 0 8px #4DBB5F;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    .badge-text {
+      font-size: clamp(12px, 1.2vw, 18px);
+      color: rgba(255,255,255,0.55);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Icono decorativo: ticket/entrada – esquina */
+    .deco-icon {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      opacity: 0.07;
+    }
+
+    /* Crédito */
+    .credit {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 0.9vw, 14px);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="accent-line-top"></div>
+    <div class="accent-line-bottom"></div>
+
+    <div class="circle-bg c1"></div>
+    <div class="circle-bg c2"></div>
+    <div class="circle-bg c3"></div>
+
+    <!-- Icono decorativo: ticket con QR -->
+    <svg class="deco-icon" width="220" height="180" viewBox="0 0 110 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- ticket base -->
+      <rect x="4" y="14" width="102" height="62" rx="8" stroke="white" stroke-width="3.5"/>
+      <!-- línea punteada separadora -->
+      <line x1="72" y1="14" x2="72" y2="76" stroke="white" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <!-- muesca izquierda -->
+      <circle cx="72" cy="14" r="5" fill="#0a0f1e" stroke="white" stroke-width="2.5"/>
+      <circle cx="72" cy="76" r="5" fill="#0a0f1e" stroke="white" stroke-width="2.5"/>
+      <!-- mini QR en el stub derecho -->
+      <rect x="80" y="30" width="5" height="5" fill="white" opacity="0.7"/>
+      <rect x="88" y="30" width="5" height="5" fill="white" opacity="0.7"/>
+      <rect x="80" y="38" width="5" height="5" fill="white" opacity="0.7"/>
+      <rect x="88" y="38" width="5" height="5" fill="white" opacity="0.7"/>
+      <!-- líneas de texto simulado lado izquierdo -->
+      <rect x="14" y="30" width="44" height="5" rx="2" fill="white" opacity="0.5"/>
+      <rect x="14" y="42" width="30" height="4" rx="2" fill="white" opacity="0.3"/>
+      <rect x="14" y="53" width="38" height="4" rx="2" fill="white" opacity="0.3"/>
+    </svg>
+
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0d1b3e"/>
+          <rect x="8"  y="8"  width="20" height="20" rx="4" fill="#2B5EA7"/>
+          <rect x="36" y="8"  width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="8"  y="36" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="36" y="36" width="20" height="20" rx="4" fill="#4DBB5F"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-event">Event</span><span class="logo-pass">Pass</span>
+        </div>
+      </div>
+
+      <!-- Etiqueta rol -->
+      <div class="role-label">
+        <div class="role-line"></div>
+        <span class="role-tag">Rol · Usuario</span>
+        <div class="role-line"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texto principal -->
+      <p class="welcome-text">
+        El <strong>usuario</strong> explora eventos,<br>
+        compra entradas y recibe<br>su <strong>código QR</strong> al instante.
+      </p>
+
+      <!-- Capacidades -->
+      <div class="caps">
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Explorar eventos</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Comprar con Stripe</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Obtener entrada QR</span></div>
+      </div>
+
+      <!-- Badge -->
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Experiencia de compra · EventPass</span>
+      </div>
+    </div>
+
+    <div class="credit">IES Palomeras-Vallecas · DAM 2026 · Alejandro &amp; Jeddy</div>
+  </div>
+</body>
+</html>

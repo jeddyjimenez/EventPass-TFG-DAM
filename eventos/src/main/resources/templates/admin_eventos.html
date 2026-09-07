@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Eventos</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/eventos}">Eventos</a>
+        <a th:href="@{/admin/eventos}">Mis eventos</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Cerrar sesión</a>
+    </nav>
+
+    <h1>Mis eventos (admin)</h1>
+    <p th:if="${#lists.isEmpty(eventos)}" style="color:red;">No tienes eventos</p>
+    <ul th:if="${!#lists.isEmpty(eventos)}">
+        <li th:each="evento : ${eventos}">
+            <strong th:text="${evento.nombre}">Nombre evento</strong>
+                <span> - </span>
+                <span th:text="${evento.fechaInicio}">Fecha inicio</span>
+                <span th:text="${evento.estado}">Estado</span>
+                <a th:href="@{/admin/eventos/{id}/editar(id=${evento.id})}">Editar evento</a>
+                <form method="post" th:action="@{/admin/eventos/{id}/eliminar(id=${evento.id})}">
+                    <button type="submit">Eliminar</button>
+                </form>                
+        </li>
+    </ul>
+    <form th:action="@{/admin/eventos/nuevo}">
+        <button type="submit">Crear evento</button>
+    </form>
+</body>
+</html>

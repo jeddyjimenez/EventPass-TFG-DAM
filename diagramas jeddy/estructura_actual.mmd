@@ -1,0 +1,57 @@
+graph TD
+  A[ProyectoEventPass] --> B[eventos]
+  B --> B1[pom.xml]
+  B --> B2[mvnw / mvnw.cmd]
+  B --> C[src/main/java/com/tfg/eventos]
+  C --> C1[EventosApplication.java]
+  C --> C2[ServletInitializer.java]
+  C --> C3[config]
+  C3 --> C31[SeguridadConfig.java]
+  C3 --> C32[UsuarioDetallesService.java]
+  C --> C4[controlador]
+  C4 --> C41[AuthController.java]
+  C4 --> C42[InicioController.java]
+  C4 --> C43[EventoController.java]
+  C4 --> C44[UsuarioController.java]
+  C4 --> C45[AdminEventoController.java]
+  C4 --> C46[ValidadorController.java]
+  C4 --> C47[ValidadorApiController.java]
+  C --> C5[entidad]
+  C5 --> C51[Usuario.java]
+  C5 --> C52[Evento.java]
+  C5 --> C53[Asistente.java]
+  C5 --> C54[Entrada.java]
+  C5 --> C55[RegistroAcceso.java]
+  C5 --> C56[enums/*]
+  C --> C6[repositorio/*Repository.java]
+  C --> C7[servicio/*Service.java]
+  B --> D[src/main/resources]
+  D --> D1[application.properties]
+  D --> D2[schema.sql]
+  D --> D3[templates]
+  D3 --> D31[eventos_lista.html]
+  D3 --> D32[evento_detalle.html]
+  D3 --> D33[mis_entradas.html]
+  D3 --> D34[login.html]
+  D3 --> D35[register.html]
+  D3 --> D36[registro_exito.html]
+  D3 --> D37[admin_eventos.html]
+  D3 --> D38[admin_evento_nuevo.html]
+  D3 --> D39[admin_evento_editar.html]
+  D3 --> D40[admin_dashboard.html]
+  D3 --> D41[noexiste.html]
+  B --> E[src/test/java/com/tfg/eventos]
+  E --> E1[EventosApplicationTests.java]
+
+Presentación Gamma PowerPoint:
+https://gamma.app/docs/EventPass-v46gft7lyxl0kse?mode=doc
+
+URL pública:
+https://proyectoeventpass-production.up.railway.app/eventos
+
+Spring-boot:
+cd /Users/juan/Downloads/ProyectoEventPass/eventos
+./mvnw spring-boot:run
+
+Abre el navegador en: 
+http://localhost:8080

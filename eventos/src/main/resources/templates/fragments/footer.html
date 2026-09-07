@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <footer th:fragment="footer" class="footer">
+        <p>&copy; 2026 EventPass - TFG Alejandro Benavent y Jeddy Jiménez. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
+
+            <!-- Columna 1: Marca y descripción -->
+            <div class="footer-col">
+                <a th:href="@{/}" class="footer-brand-link">
+                    <span class="footer-brand-name">
+                        <span class="brand-event">Event</span><span class="brand-pass">Pass</span>
+                    </span>
+                </a>
+                <p class="footer-tagline">
+                    La plataforma líder para descubrir y reservar entradas a los mejores eventos.
+                    Conciertos, teatro, deportes y mucho más.
+                </p>
+                <div class="footer-socials">
+                    <a href="#" class="footer-social-link" aria-label="Twitter/X">𝕏</a>
+                    <a href="#" class="footer-social-link" aria-label="Instagram">📷</a>
+                    <a href="#" class="footer-social-link" aria-label="Facebook">f</a>
+                    <a href="#" class="footer-social-link" aria-label="TikTok">♪</a>
+                </div>
+            </div>
+
+            <!-- Columna 2: Eventos -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Eventos</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/eventos}">Todos los eventos</a></li>
+                    <li><a th:href="@{/busqueda(q='concierto')}">Conciertos</a></li>
+                    <li><a th:href="@{/busqueda(q='deporte')}">Deportes</a></li>
+                    <li><a th:href="@{/busqueda(q='teatro')}">Teatro</a></li>
+                    <li><a th:href="@{/busqueda(q='festival')}">Festivales</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna 3: Cuenta -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Tu Cuenta</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/mis_entradas}">Mis entradas</a></li>
+                    <li><a th:href="@{/login}">Iniciar sesión</a></li>
+                    <li><a th:href="@{/register}">Registrarse</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna 4: Ayuda -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Ayuda</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="#">Política de privacidad</a></li>
+                    <li><a href="#">Términos de uso</a></li>
+                    <li><a href="#">Accesibilidad</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Línea inferior -->
+        <div class="footer-bottom-full">
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2026 EventPass &mdash; TFG Alejandro Benavent &amp; Jeddy Jiménez. Todos los derechos reservados.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacidad</a>
+                    <a href="#">Términos</a>
+                    <a href="#">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

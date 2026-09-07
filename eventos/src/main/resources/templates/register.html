@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container" style="display: flex; justify-content: center; align-items: center;">
+        <div class="form-container">
+            <h1 style="text-align: center; color: var(--primary-color);">Crear cuenta</h1>
+            <p style="text-align: center; color: var(--text-light); margin-bottom: 2rem;">Únete a EventPass y comienza a vivir experiencias únicas.</p>
+
+            <div th:if="${param.error}" style="background-color: #fee2e2; color: var(--danger-color); padding: 0.75rem; border-radius: 6px; margin-bottom: 1.5rem; text-align: center;">
+                Este email ya se encuentra registrado en el sistema.
+            </div>
+
+            <form method="post" th:action="@{/register}">
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input id="nombre" name="nombre" type="text" class="form-control" placeholder="Juan Pérez" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input id="email" name="email" type="email" class="form-control" placeholder="juan@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+                    <input id="contrasena" name="contrasena" type="password" class="form-control" placeholder="Mínimo 8 caracteres" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="rol">Tipo de Cuenta</label>
+                    <select id="rol" name="rol" class="form-control" required>
+                        <option value="USUARIO">Usuario (Asistente)</option>
+                        <option value="ADMIN">Organización (Creador de eventos)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="font-size: 1rem; padding: 0.75rem; margin-top: 1rem;">Registrarme en EventPass</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 1.5rem;">
+                ¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia sesión aquí</a>
+            </p>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventPass – Rol Administrador</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0f1e;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #0c1a3a 0%, #0a0f1e 70%);
+      overflow: hidden;
+    }
+
+    /* Fondo con puntos sutiles */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(43, 94, 167, 0.09) 1px, transparent 1px),
+        radial-gradient(circle, rgba(43, 94, 167, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px, 90px 90px;
+      background-position: 0 0, 30px 30px;
+    }
+
+    /* Línea decorativa superior – azul más intenso para admin */
+    .accent-line-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1a3d7a, #2B5EA7, #4a90d9, #2B5EA7, #1a3d7a);
+    }
+
+    /* Línea decorativa inferior */
+    .accent-line-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #2B5EA7, #1a3d7a, #2B5EA7);
+    }
+
+    /* Círculos decorativos de fondo */
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+    .circle-bg.c1 {
+      width: 700px; height: 700px;
+      background: #2B5EA7;
+      opacity: 0.07;
+      top: -200px; left: -150px;
+    }
+    .circle-bg.c2 {
+      width: 500px; height: 500px;
+      background: #1a3d7a;
+      opacity: 0.08;
+      bottom: -120px; right: -100px;
+    }
+    .circle-bg.c3 {
+      width: 280px; height: 280px;
+      background: #4a90d9;
+      opacity: 0.05;
+      top: 25%; left: 65%;
+    }
+
+    /* Contenido central */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3.2vh;
+      text-align: center;
+      padding: 0 6vw;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 0.5vh;
+    }
+
+    .logo-icon {
+      width: 64px;
+      height: 64px;
+      margin-right: 18px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-event { color: #2B5EA7; }
+    .logo-pass  { color: #4DBB5F; }
+
+    /* Etiqueta de rol */
+    .role-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5vh;
+    }
+
+    .role-line {
+      width: 50px;
+      height: 1px;
+      background: rgba(43, 94, 167, 0.5);
+    }
+
+    .role-tag {
+      font-size: clamp(11px, 1.1vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #4a90d9;
+    }
+
+    /* Separador */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #1a3d7a, #4a90d9);
+      border-radius: 2px;
+      margin: 0 auto;
+    }
+
+    /* Texto principal */
+    .welcome-text {
+      font-size: clamp(20px, 2.6vw, 38px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.55;
+      max-width: 860px;
+      letter-spacing: 0.01em;
+    }
+
+    .welcome-text strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* Tarjetas de capacidades del admin */
+    .caps {
+      display: flex;
+      gap: 16px;
+      margin-top: 0.5vh;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .cap-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(43, 94, 167, 0.1);
+      border: 1px solid rgba(43, 94, 167, 0.25);
+      border-radius: 10px;
+      padding: 9px 18px;
+    }
+
+    .cap-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4a90d9;
+      flex-shrink: 0;
+    }
+
+    .cap-text {
+      font-size: clamp(11px, 1vw, 15px);
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* Badge de rol activo */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(43, 94, 167, 0.12);
+      border: 1px solid rgba(43, 94, 167, 0.3);
+      border-radius: 100px;
+      padding: 10px 24px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4a90d9;
+      box-shadow: 0 0 8px #4a90d9;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    .badge-text {
+      font-size: clamp(12px, 1.2vw, 18px);
+      color: rgba(255,255,255,0.55);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Icono decorativo de escudo/dashboard – esquina */
+    .deco-icon {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      opacity: 0.07;
+    }
+
+    /* Crédito */
+    .credit {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 0.9vw, 14px);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="accent-line-top"></div>
+    <div class="accent-line-bottom"></div>
+
+    <div class="circle-bg c1"></div>
+    <div class="circle-bg c2"></div>
+    <div class="circle-bg c3"></div>
+
+    <!-- Icono decorativo: escudo con rejilla (admin / dashboard) -->
+    <svg class="deco-icon" width="210" height="210" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- escudo -->
+      <path d="M50 8 L88 22 L88 52 C88 72 70 88 50 94 C30 88 12 72 12 52 L12 22 Z"
+            stroke="white" stroke-width="3.5" fill="none" stroke-linejoin="round"/>
+      <!-- rejilla interior tipo dashboard -->
+      <rect x="30" y="36" width="16" height="12" rx="2" fill="white" opacity="0.6"/>
+      <rect x="54" y="36" width="16" height="12" rx="2" fill="white" opacity="0.9"/>
+      <rect x="30" y="54" width="16" height="8"  rx="2" fill="white" opacity="0.9"/>
+      <rect x="54" y="54" width="16" height="8"  rx="2" fill="white" opacity="0.6"/>
+    </svg>
+
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0d1b3e"/>
+          <rect x="8"  y="8"  width="20" height="20" rx="4" fill="#2B5EA7"/>
+          <rect x="36" y="8"  width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="8"  y="36" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="36" y="36" width="20" height="20" rx="4" fill="#4DBB5F"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-event">Event</span><span class="logo-pass">Pass</span>
+        </div>
+      </div>
+
+      <!-- Etiqueta rol -->
+      <div class="role-label">
+        <div class="role-line"></div>
+        <span class="role-tag">Rol · Administrador</span>
+        <div class="role-line"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texto principal -->
+      <p class="welcome-text">
+        El <strong>administrador</strong> gestiona eventos,<br>
+        controla aforos y supervisa<br>el acceso en tiempo real.
+      </p>
+
+      <!-- Capacidades -->
+      <div class="caps">
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Crear y editar eventos</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Gestionar entradas</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Panel de estadísticas</span></div>
+      </div>
+
+      <!-- Badge -->
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Panel de administración · EventPass</span>
+      </div>
+    </div>
+
+    <div class="credit">IES Palomeras-Vallecas · DAM 2026 · Alejandro &amp; Jeddy</div>
+  </div>
+</body>
+</html>

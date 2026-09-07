@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventPass — Descubre los mejores eventos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body class="home-page">
+
+    <!-- ═══════════════════════════════════════
+         NAVBAR
+    ═══════════════════════════════════════ -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- ═══════════════════════════════════════
+         HERO SECTION
+    ═══════════════════════════════════════ -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+
+            <!-- Fila superior: texto (izq) + stats (der) -->
+            <div class="hero-top-row">
+
+                <!-- Izquierda: badge + título + subtítulo + botón -->
+                <div class="hero-text-col">
+                    <span class="hero-badge">✨ Vive experiencias inolvidables</span>
+                    <h1 class="hero-title">
+                        Descubre los mejores<br>eventos cerca de ti
+                    </h1>
+                    <p class="hero-subtitle">
+                        Conciertos, deporte, teatro y mucho más.<br>
+                        Reserva tu entrada y disfruta.
+                    </p>
+                    <!-- Botón + barra de búsqueda en la misma fila -->
+                    <div class="hero-action-row">
+                        <a th:href="@{/eventos}" class="btn-hero-primary">Explorar Eventos ›</a>
+                        <form th:action="@{/busqueda}" method="get" class="hero-search-form">
+                            <div class="hero-search-bar">
+                                <input type="text"
+                                       name="nombre"
+                                       placeholder="Busca conciertos, festivales, deportes, teatro..."
+                                       autocomplete="off">
+                                <button type="submit" class="hero-search-btn">🔍</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </section>
+
+
+
+    <!-- ═══════════════════════════════════════
+         EVENTOS DESTACADOS
+    ═══════════════════════════════════════ -->
+    <section>
+        <div class="home-section">
+            <div class="section-header">
+                <div class="section-header-text">
+                    <h2 class="section-title">Eventos destacados 🔥</h2>
+                    <p class="section-subtitle">Los eventos más populares y recomendados para ti.</p>
+                </div>
+                <a th:href="@{/eventos}" class="section-see-all">Ver todos los eventos ›</a>
+            </div>
+
+            <!-- Sin eventos -->
+            <div th:if="${#lists.isEmpty(eventos)}" class="home-empty-state">
+                <span>🎭</span>
+                No hay eventos disponibles en este momento. ¡Vuelve pronto!
+            </div>
+
+            <!-- Grid de cards premium -->
+            <div class="events-premium-grid" th:if="${!#lists.isEmpty(eventos)}">
+
+                <div class="event-card-premium"
+                     th:each="evento, iterStat : ${eventos}"
+                     th:if="${iterStat.index < 8}">
+
+                    <!-- Imagen con overlays -->
+                    <div class="event-card-img">
+
+                        <img th:if="${evento.imagenUrl != null and !#strings.isEmpty(evento.imagenUrl)}"
+                             th:src="${evento.imagenUrl}"
+                             th:alt="${evento.nombre}"
+                             loading="lazy">
+                        <div class="event-card-img-placeholder"
+                             th:if="${evento.imagenUrl == null or #strings.isEmpty(evento.imagenUrl)}">
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'CONCIERTO'}">🎵</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'DEPORTIVO'}">⚽</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'TEATRO'}">🎭</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'MUSICAL'}">🎶</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'ESPECTACULO'}">🎪</span>
+                            <span th:if="${evento.tipo == null or evento.tipo.name() == 'OTRO'}">🎫</span>
+                        </div>
+
+                        <!-- Badge de fecha tipo ticket -->
+                        <div class="event-date-badge" th:if="${evento.fechaInicio != null}">
+                            <span class="event-date-day"  th:text="${#temporals.format(evento.fechaInicio, 'dd')}">15</span>
+                            <span class="event-date-month" th:text="${#temporals.format(evento.fechaInicio, 'MMM')}">JUL</span>
+                            <span class="event-date-time"  th:text="${#temporals.format(evento.fechaInicio, 'HH:mm')}">21:00</span>
+                        </div>
+
+
+                    </div>
+
+                    <!-- Cuerpo de la card -->
+                    <div class="event-card-body">
+                        <span class="event-category-tag">
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'CONCIERTO'}">🎵 Concierto</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'DEPORTIVO'}">⚽ Deporte</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'TEATRO'}">🎭 Teatro</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'MUSICAL'}">🎶 Musical</span>
+                            <span th:if="${evento.tipo != null and evento.tipo.name() == 'ESPECTACULO'}">🎪 Espectáculo</span>
+                            <span th:if="${evento.tipo == null or evento.tipo.name() == 'OTRO'}">🎫 Evento</span>
+                        </span>
+                        <h3 class="event-card-title" th:text="${evento.nombre}">Nombre del Evento</h3>
+                        <p class="event-card-location" th:if="${evento.ubicacion != null}">
+                            📍 <span th:text="${evento.ubicacion}">Madrid</span>
+                        </p>
+                        <p class="event-card-desc"
+                           th:text="${#strings.abbreviate(evento.descripcion, 110)}">
+                            Descripción del evento...
+                        </p>
+                    </div>
+
+                    <!-- Footer de la card -->
+                    <div class="event-card-footer">
+                        <span class="event-status-pill pill-available"
+                              th:if="${iterStat.index % 3 != 2}">Entradas disponibles</span>
+                        <span class="event-status-pill pill-last"
+                              th:if="${iterStat.index % 3 == 2}">Últimas entradas</span>
+                        <a th:href="@{/eventos/{id}(id=${evento.id})}" class="btn-card-detail">
+                            Ver Detalle ›
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         TRUST SECTION — Valor añadido
+    ═══════════════════════════════════════ -->
+    <section class="trust-section">
+        <div class="trust-wrapper">
+            <div class="trust-item">
+                <div class="trust-icon">🛡️</div>
+                <div>
+                    <h4>Compra segura</h4>
+                    <p>Tus datos y pagos siempre protegidos con cifrado SSL de última generación.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">📱</div>
+                <div>
+                    <h4>Tu entrada digital</h4>
+                    <p>Accede a tus entradas desde el móvil en cualquier momento, sin impresión.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">🎧</div>
+                <div>
+                    <h4>Atención al cliente</h4>
+                    <p>Estamos aquí para ayudarte 24/7. Contacta con nuestro <a th:href="@{/contacto}" style="color:#2563eb;font-weight:600;">Soporte</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════ -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- ═══════════════════════════════════════
+         JS: Navbar scroll effect
+    ═══════════════════════════════════════ -->
+    <script>
+        (function () {
+            const navbar = document.querySelector('.navbar');
+            if (!navbar) return;
+            function onScroll() {
+                if (window.scrollY > 60) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+        })();
+    </script>
+
+</body>
+</html>

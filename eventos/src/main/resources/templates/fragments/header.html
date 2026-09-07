@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header th:fragment="header" class="navbar">
+
+        <!-- Logo -->
+        <a th:href="@{/eventos}" class="navbar-brand">
+            <span class="brand-event">Event</span><span class="brand-pass">Pass</span>
+        </a>
+
+        <!-- Navegación central -->
+        <nav class="nav-links">
+            <a th:href="@{/eventos}" class="nav-link-item">
+                <span class="nav-icon">🏠</span> Explorar
+            </a>
+            <a th:href="@{/busqueda}" class="nav-link-item">
+                <span class="nav-icon">🔍</span> Búsqueda
+            </a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/mis_entradas}" class="nav-link-item">
+                <span class="nav-icon">🎫</span> Mis entradas
+            </a>
+            <a th:href="@{/contacto}" class="nav-link-item">
+                <span class="nav-icon">📞</span> Contacto
+            </a>
+        </nav>
+
+        <!-- Acciones de usuario -->
+        <div class="nav-actions">
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/eventos}" class="btn btn-outline">
+                Panel Admin
+            </a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-outline">
+                Iniciar Sesión
+            </a>
+            <a sec:authorize="isAnonymous()" th:href="@{/register}" class="btn btn-primary">
+                Registrarse
+            </a>
+            <div sec:authorize="isAuthenticated()" class="nav-user-menu">
+                <a th:href="@{/mis_entradas}" class="nav-avatar" style="text-decoration:none;">
+                    <span sec:authorize="isAuthenticated()"
+                          th:text="${#authentication.name != null ? #authentication.name.substring(0,1).toUpperCase() : 'U'}">U</span>
+                </a>
+                <span class="nav-username" sec:authentication="name">Usuario</span>
+                <a th:href="@{/logout}" class="btn btn-danger nav-logout">Cerrar Sesión</a>
+            </div>
+        </div>
+
+        <!-- Botón hamburguesa (móvil) -->
+        <button class="nav-mobile-toggle" id="navToggle" type="button" aria-label="Abrir menú">
+            &#9776;
+        </button>
+
+    </header>
+
+    <!-- Menú móvil overlay -->
+    <div class="nav-mobile-drawer" id="navDrawer">
+        <div class="nav-mobile-inner">
+            <a th:href="@{/eventos}">🏠 Explorar</a>
+            <a th:href="@{/busqueda}">🔍 Búsqueda</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/mis_entradas}">🎫 Mis entradas</a>
+            <a th:href="@{/contacto}">📞 Contacto</a>
+            <hr style="border-color: #e2e8f0; margin: 0.5rem 0;">
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/eventos}">⚙️ Panel Admin</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/login}">Iniciar Sesión</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/register}">Registrarse</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/logout}" style="color: #ef4444;">Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const toggle = document.getElementById('navToggle');
+            const drawer = document.getElementById('navDrawer');
+            if (toggle && drawer) {
+                toggle.addEventListener('click', function () {
+                    drawer.classList.toggle('open');
+                });
+                // Cerrar al hacer clic fuera
+                document.addEventListener('click', function (e) {
+                    if (!toggle.contains(e.target) && !drawer.contains(e.target)) {
+                        drawer.classList.remove('open');
+                    }
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

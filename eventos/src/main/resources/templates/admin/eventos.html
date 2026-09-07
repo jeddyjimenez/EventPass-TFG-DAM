@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Eventos | Admin EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container">
+        <div class="admin-header">
+            <div>
+                <h1 style="color: var(--primary-color);">Mis Eventos</h1>
+                <p style="color: var(--text-light);">Administra, edita y publica tus eventos creados.</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a th:href="@{/admin/dashboard}" class="btn btn-outline">Volver al panel de control</a>
+                <a th:href="@{/admin/eventos/nuevo}" class="btn btn-primary">+ Crear Nuevo Evento</a>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Fecha Inicio</th>
+                        <th>Ubicación</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(eventos)}">
+                        <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                            No has creado ningún evento todavía.
+                        </td>
+                    </tr>
+                    <tr th:each="evento : ${eventos}">
+                        <td th:text="${evento.nombre}">Nombre</td>
+                        <td th:text="${#temporals.format(evento.fechaInicio, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+                        <td th:text="${evento.ubicacion}">Ubicación</td>
+                        <td>
+                            <span th:text="${evento.estado}"
+                                  th:style="${evento.estado.name() == 'PUBLICADO'} ? 'color: var(--success-color); font-weight: bold;' : 'color: var(--text-light);'">Estado</span>
+                        </td>
+                        <td class="actions-cell">
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <form th:if="${evento.estado.name() != 'PUBLICADO'}"
+                                      th:action="@{/admin/eventos/{id}/publicar(id=${evento.id})}"
+                                      method="post">
+                                    <button type="submit" class="btn btn-primary" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box; border: 1px solid transparent;">Publicar</button>
+                                </form>
+                                <form th:if="${evento.estado.name() == 'PUBLICADO'}"
+                                      th:action="@{/admin/eventos/{id}/ocultar(id=${evento.id})}"
+                                      method="post">
+                                    <button type="submit" class="btn btn-gris" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box;">Ocultar</button>
+                                </form>
+                                <form th:action="@{/admin/eventos/{id}/editar(id=${evento.id})}" method="get">
+                                    <button type="submit" class="btn btn-outline" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box;">Editar</button>
+                                </form>
+                                <form th:action="@{/admin/eventos/{id}/eliminar(id=${evento.id})}" method="post">
+                                    <button type="submit" class="btn btn-danger" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box; border: 1px solid transparent;" onclick="return confirm('¿Seguro que deseas eliminar este evento?');">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventPass – Intro</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0f1e;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #0d1b3e 0%, #0a0f1e 70%);
+      overflow: hidden;
+    }
+
+    /* Fondo con puntos sutiles */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(75, 185, 90, 0.07) 1px, transparent 1px),
+        radial-gradient(circle, rgba(43, 94, 167, 0.07) 1px, transparent 1px);
+      background-size: 60px 60px, 90px 90px;
+      background-position: 0 0, 30px 30px;
+    }
+
+    /* Línea decorativa superior */
+    .accent-line-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #2B5EA7, #4DBB5F, #2B5EA7);
+    }
+
+    /* Línea decorativa inferior */
+    .accent-line-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #4DBB5F, #2B5EA7, #4DBB5F);
+    }
+
+    /* Círculos decorativos de fondo */
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.06;
+      filter: blur(60px);
+    }
+    .circle-bg.c1 {
+      width: 600px; height: 600px;
+      background: #2B5EA7;
+      top: -150px; left: -100px;
+    }
+    .circle-bg.c2 {
+      width: 500px; height: 500px;
+      background: #4DBB5F;
+      bottom: -100px; right: -80px;
+    }
+    .circle-bg.c3 {
+      width: 300px; height: 300px;
+      background: #4DBB5F;
+      top: 30%; left: 60%;
+      opacity: 0.04;
+    }
+
+    /* Contenido central */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3.5vh;
+      text-align: center;
+      padding: 0 6vw;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo tipo texto */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 1vh;
+    }
+
+    .logo-icon {
+      width: 64px;
+      height: 64px;
+      margin-right: 18px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-event {
+      color: #2B5EA7;
+    }
+
+    .logo-pass {
+      color: #4DBB5F;
+    }
+
+    /* Separador */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #2B5EA7, #4DBB5F);
+      border-radius: 2px;
+      margin: 0 auto;
+    }
+
+    /* Texto bienvenida */
+    .welcome-text {
+      font-size: clamp(20px, 2.6vw, 38px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.5;
+      max-width: 860px;
+      letter-spacing: 0.01em;
+    }
+
+    .welcome-text strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* Badge inferior */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 10px 24px;
+      margin-top: 1vh;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4DBB5F;
+      box-shadow: 0 0 8px #4DBB5F;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .badge-text {
+      font-size: clamp(12px, 1.2vw, 18px);
+      color: rgba(255,255,255,0.55);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* QR icon decorativo */
+    .qr-deco {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      opacity: 0.08;
+    }
+
+    /* IES logo / crédito */
+    .credit {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 0.9vw, 14px);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="accent-line-top"></div>
+    <div class="accent-line-bottom"></div>
+
+    <div class="circle-bg c1"></div>
+    <div class="circle-bg c2"></div>
+    <div class="circle-bg c3"></div>
+
+    <!-- QR decorativo -->
+    <svg class="qr-deco" width="220" height="220" viewBox="0 0 100 100" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5"  y="5"  width="35" height="35" rx="4" fill="none" stroke="white" stroke-width="4"/>
+      <rect x="14" y="14" width="17" height="17" rx="1"/>
+      <rect x="60" y="5"  width="35" height="35" rx="4" fill="none" stroke="white" stroke-width="4"/>
+      <rect x="69" y="14" width="17" height="17" rx="1"/>
+      <rect x="5"  y="60" width="35" height="35" rx="4" fill="none" stroke="white" stroke-width="4"/>
+      <rect x="14" y="69" width="17" height="17" rx="1"/>
+      <rect x="60" y="60" width="6"  height="6"/>
+      <rect x="70" y="60" width="6"  height="6"/>
+      <rect x="80" y="60" width="6"  height="6"/>
+      <rect x="90" y="60" width="6"  height="6"/>
+      <rect x="60" y="70" width="6"  height="6"/>
+      <rect x="80" y="70" width="6"  height="6"/>
+      <rect x="60" y="80" width="6"  height="6"/>
+      <rect x="70" y="80" width="6"  height="6"/>
+      <rect x="90" y="80" width="6"  height="6"/>
+      <rect x="60" y="90" width="6"  height="6"/>
+      <rect x="80" y="90" width="6"  height="6"/>
+      <rect x="90" y="90" width="6"  height="6"/>
+    </svg>
+
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0d1b3e"/>
+          <rect x="8" y="8" width="20" height="20" rx="4" fill="#2B5EA7"/>
+          <rect x="36" y="8" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="8" y="36" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="36" y="36" width="20" height="20" rx="4" fill="#4DBB5F"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-event">Event</span><span class="logo-pass">Pass</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texto principal -->
+      <p class="welcome-text">
+        <strong>Bienvenidos a EventPass,</strong><br>
+        una plataforma para la gestión<br>y validación de eventos.
+      </p>
+
+      <!-- Badge -->
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Sistema de control de acceso mediante códigos QR</span>
+      </div>
+    </div>
+
+    <div class="credit">IES Palomeras-Vallecas · DAM 2026 · Alejandro &amp; Jeddy</div>
+  </div>
+</body>
+</html>

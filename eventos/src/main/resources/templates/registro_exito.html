@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro completado | EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container" style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+        <div class="form-container" style="max-width: 560px; text-align: center;">
+            <h1 style="color: var(--primary-color); margin-bottom: 1rem;">Registro completado correctamente</h1>
+            <p style="color: var(--text-light); margin-bottom: 2rem;">Tu cuenta se ha creado con éxito. Ahora puedes iniciar sesión y explorar los eventos.</p>
+            <a th:href="@{/login}" class="btn btn-primary" style="padding: 0.9rem 1.5rem; font-size: 1rem;">Ir a iniciar sesión</a>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

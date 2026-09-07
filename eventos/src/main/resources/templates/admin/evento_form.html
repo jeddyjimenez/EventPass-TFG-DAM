@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${evento.id == null ? 'Nuevo Evento | Admin EventPass' : 'Editar Evento | Admin EventPass'}">Formulario Evento</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container">
+        <div class="form-container" style="max-width: 800px;">
+            <div class="admin-header" style="margin-bottom: 1.5rem;">
+                <div>
+                    <h1 style="color: var(--primary-color);" th:text="${evento.id == null ? 'Crear Nuevo Evento' : 'Editar Evento'}">Evento</h1>
+                    <p style="color: var(--text-light);">Completa los datos necesarios para tu evento.</p>
+                </div>
+            </div>
+
+            <!-- Usamos un solo formulario que cambia su ruta dependiendo de si estamos creando o editando -->
+            <form method="post" enctype="multipart/form-data" th:action="${evento.id == null ? '/admin/eventos' : '/admin/eventos/' + evento.id}" th:object="${evento}" novalidate>
+
+                <div class="form-group">
+                    <label for="nombre">Nombre del Evento</label>
+                    <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Ej. Concierto de Verano" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" th:field="*{descripcion}" class="form-control" rows="5" placeholder="Detalles, información importante, qué esperar..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="ubicacion">Ubicación</label>
+                    <input type="text" id="ubicacion" th:field="*{ubicacion}" class="form-control" placeholder="Ej. Sala de Conciertos A, Madrid" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="fechaInicio">Fecha y Hora de Inicio</label>
+                        <input type="datetime-local" id="fechaInicio" name="fechaInicio" class="form-control" required
+                               th:value="${evento.fechaInicio != null ? #temporals.format(evento.fechaInicio, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fechaFin">Fecha y Hora de Fin</label>
+                        <input type="datetime-local" id="fechaFin" name="fechaFin" class="form-control" required
+                               th:value="${evento.fechaFin != null ? #temporals.format(evento.fechaFin, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="capacidad">Capacidad Máxima</label>
+                    <input type="number" id="capacidad" th:field="*{capacidad}" class="form-control" min="1" placeholder="Ej. 100" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="precio">Precio de la Entrada (€)</label>
+                    <input type="number" id="precio" th:field="*{precio}" class="form-control" min="0" step="0.01" placeholder="Ej. 20.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo">Tipo de Evento</label>
+                    <select id="tipo" th:field="*{tipo}" class="form-control">
+                        <option value="">-- Sin especificar --</option>
+                        <option value="CONCIERTO">Concierto</option>
+                        <option value="TEATRO">Teatro</option>
+                        <option value="MUSICAL">Musical</option>
+                        <option value="DEPORTIVO">Deportivo</option>
+                        <option value="ESPECTACULO">Espectáculo</option>
+                        <option value="INFANTIL">Infantil</option>
+                        <option value="CINE">Cine</option>
+                        <option value="OTRO">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="imagenFile">Imagen del Evento</label>
+                    <input type="file" id="imagenFile" name="imagenFile" class="form-control" accept="image/*">
+                    <small style="color: var(--text-light); display: block; margin-top: 0.35rem;">
+                        Formatos recomendados: JPG/PNG/WebP. Si editas un evento y subes otra imagen, reemplaza la actual.
+                    </small>
+                    <div th:if="${evento.imagenUrl != null}" style="margin-top: 0.75rem;">
+                        <img th:src="${evento.imagenUrl}" alt="Imagen actual del evento" style="max-width: 220px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    </div>
+                </div>
+
+                <!-- Selección de validadores opcional (si tu controlador lo necesita) -->
+                <div class="form-group" th:if="${validadoresDisponibles != null and !#lists.isEmpty(validadoresDisponibles)}">
+                    <label>Asignar Validadores</label>
+                    <div id="validadoresContainer" style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px; max-height: 150px; overflow-y: auto;">
+                        <div th:each="validador : ${validadoresDisponibles}" style="margin-bottom: 0.5rem;">
+                            <input type="checkbox" name="validadoresIds" th:value="${validador.id}"
+                                   th:id="${'val_' + validador.id}"
+                                   th:checked="${validadoresSeleccionadosIds != null and #lists.contains(validadoresSeleccionadosIds, validador.id)}">
+                            <label th:for="${'val_' + validador.id}" th:text="${validador.nombre + ' (' + validador.email + ')'}" style="display: inline; font-weight: normal; margin-left: 0.5rem;"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" th:text="${evento.id == null ? 'Crear Evento' : 'Guardar Cambios'}" style="font-size: 1.1rem; padding: 0.75rem 2rem;">Guardar</button>
+                    <a th:href="@{/admin/eventos}" class="btn btn-outline" style="font-size: 1.1rem; padding: 0.75rem 2rem;">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('form[novalidate]');
+            var requiredFields = ['nombre', 'descripcion', 'ubicacion', 'fechaInicio', 'fechaFin', 'capacidad', 'precio'];
+
+            function showError(field) {
+                field.classList.add('is-invalid');
+                if (!field.parentNode.querySelector('.invalid-feedback')) {
+                    var msg = document.createElement('span');
+                    msg.className = 'invalid-feedback';
+                    msg.textContent = 'Este campo es obligatorio';
+                    field.parentNode.insertBefore(msg, field.nextSibling);
+                }
+            }
+
+            function clearError(field) {
+                field.classList.remove('is-invalid');
+                var msg = field.parentNode.querySelector('.invalid-feedback');
+                if (msg) msg.remove();
+            }
+
+            function showGroupError(container) {
+                container.style.borderColor = '#dc2626';
+                container.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+                if (!container.parentNode.querySelector('.invalid-feedback')) {
+                    var msg = document.createElement('span');
+                    msg.className = 'invalid-feedback';
+                    msg.textContent = 'Este campo es obligatorio';
+                    container.parentNode.appendChild(msg);
+                }
+            }
+
+            function clearGroupError(container) {
+                container.style.borderColor = '';
+                container.style.boxShadow = '';
+                var msg = container.parentNode.querySelector('.invalid-feedback');
+                if (msg) msg.remove();
+            }
+
+            // Validación en tiempo real para campos de texto/número/fecha
+            requiredFields.forEach(function (id) {
+                var field = document.getElementById(id);
+                if (!field) return;
+                ['input', 'change'].forEach(function (evt) {
+                    field.addEventListener(evt, function () {
+                        if (field.value.trim() !== '') clearError(field);
+                    });
+                });
+            });
+
+            // Validación en tiempo real para tipo de evento
+            var tipoField = document.getElementById('tipo');
+            if (tipoField) {
+                tipoField.addEventListener('change', function () {
+                    if (tipoField.value !== '') clearError(tipoField);
+                });
+            }
+
+            // Validación en tiempo real para validadores
+            var validadoresContainer = document.getElementById('validadoresContainer');
+            if (validadoresContainer) {
+                validadoresContainer.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+                    cb.addEventListener('change', function () {
+                        var anyChecked = validadoresContainer.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+                        if (anyChecked) clearGroupError(validadoresContainer);
+                    });
+                });
+            }
+
+            form.addEventListener('submit', function (e) {
+                var hasError = false;
+
+                // Validar campos de texto/número/fecha
+                requiredFields.forEach(function (id) {
+                    var field = document.getElementById(id);
+                    if (!field) return;
+                    if (field.value.trim() === '') {
+                        showError(field);
+                        hasError = true;
+                    } else {
+                        clearError(field);
+                    }
+                });
+
+                // Validar tipo de evento
+                if (tipoField) {
+                    if (tipoField.value === '') {
+                        showError(tipoField);
+                        hasError = true;
+                    } else {
+                        clearError(tipoField);
+                    }
+                }
+
+                // Validar que haya al menos un validador seleccionado
+                if (validadoresContainer) {
+                    var anyChecked = validadoresContainer.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+                    if (!anyChecked) {
+                        showGroupError(validadoresContainer);
+                        hasError = true;
+                    } else {
+                        clearGroupError(validadoresContainer);
+                    }
+                }
+
+                if (hasError) {
+                    e.preventDefault();
+                    var firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) firstInvalid.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+# macOS
+.DS_Store
+
+
+**/.DS_Store
+
+# Variables de entorno y secretos
+.env
+**/.env
+application-local.properties
+**/application-local.properties
+
+# Java / Maven
+target/
+**/target/
+*.class
+
+# IntelliJ / Android Studio
+.idea/
+**/.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Android local config
+local.properties
+**/local.properties
+
+# Gradle
+.gradle/
+**/.gradle/
+build/
+**/build/
+
+# Python / herramientas locales
+.venv/
+**/.venv/
+.codemium/
+
+# Archivos temporales / logs
+*.log
+*.tmp
+
+# Uploads generados localmente
+uploads/
+**/uploads/
+
+.codemie/
+ProyectoEventPass/

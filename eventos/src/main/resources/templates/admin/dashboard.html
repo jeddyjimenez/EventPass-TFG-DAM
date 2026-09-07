@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Admin EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container">
+        <div class="admin-header">
+            <div>
+                <h1 style="color: var(--primary-color);">Panel de Control</h1>
+                <p style="color: var(--text-light);">Resumen de la actividad de tus eventos.</p>
+            </div>
+            <a th:href="@{/admin/eventos}" class="btn btn-primary">Gestionar Eventos</a>
+        </div>
+
+        <!-- Tarjetas resumen (funcionan como pestañas) -->
+        <div class="stats-grid">
+            <div class="stat-card" data-tab="total" onclick="showDashTab('total')">
+                <div class="stat-value" th:text="${totalEventos}">0</div>
+                <div class="stat-label">Total Eventos</div>
+            </div>
+            <div class="stat-card" data-tab="publicados" onclick="showDashTab('publicados')">
+                <div class="stat-value" th:text="${eventosPublicados}">0</div>
+                <div class="stat-label">Eventos Publicados</div>
+            </div>
+            <div class="stat-card" data-tab="vendidas" onclick="showDashTab('vendidas')">
+                <div class="stat-value" th:text="${entradasVendidas}">0</div>
+                <div class="stat-label">Entradas Vendidas</div>
+            </div>
+            <div class="stat-card" data-tab="validadas" onclick="showDashTab('validadas')">
+                <div class="stat-value" th:text="${entradasUsadas}">0</div>
+                <div class="stat-label">Entradas Validadas</div>
+            </div>
+        </div>
+
+        <!-- Paneles de tabla dinámicos -->
+        <div class="dashboard-tables">
+
+            <!-- Panel: Total Eventos -->
+            <div class="dashboard-tab-panel" id="tab-total">
+                <div class="panel-header">
+                    <span class="panel-title">Total Eventos</span>
+                    <span class="panel-count" th:text="${totalEventos} + ' eventos'">0 eventos</span>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre del Evento</th>
+                                <th class="td-desc">Descripción</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Estado</th>
+                                <th>Capacidad</th>
+                                <th>Precio (€)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(eventosAdmin)}">
+                                <td colspan="8" style="text-align:center; padding:2rem; color:var(--text-light);">
+                                    No hay eventos registrados.
+                                </td>
+                            </tr>
+                            <tr th:each="evento : ${eventosAdmin}">
+                                <td th:text="${evento.id}">1</td>
+                                <td th:text="${evento.nombre}">Nombre</td>
+                                <td class="td-desc"
+                                    th:text="${#strings.length(evento.descripcion) > 50}
+                                              ? ${#strings.substring(evento.descripcion, 0, 50)} + '…'
+                                              : ${evento.descripcion}">Desc</td>
+                                <td th:text="${#temporals.format(evento.fechaInicio, 'dd/MM/yyyy HH:mm')}">—</td>
+                                <td th:text="${#temporals.format(evento.fechaFin, 'dd/MM/yyyy HH:mm')}">—</td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="'status-' + ${#strings.toLowerCase(evento.estado.name())}"
+                                          th:text="${evento.estado.name() == 'PUBLICADO'} ? 'Publicado'
+                                                   : (${evento.estado.name() == 'PLANIFICADO'} ? 'Borrador'
+                                                   : (${evento.estado.name() == 'CANCELADO'} ? 'Cancelado'
+                                                   : 'Finalizado'))">Estado</span>
+                                </td>
+                                <td th:text="${evento.capacidad}">0</td>
+                                <td th:text="${#numbers.formatDecimal(evento.precio, 1, 2)}">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Panel: Eventos Publicados -->
+            <div class="dashboard-tab-panel" id="tab-publicados">
+                <div class="panel-header">
+                    <span class="panel-title">Eventos Publicados</span>
+                    <span class="panel-count" th:text="${eventosPublicados} + ' eventos'">0 eventos</span>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre del Evento</th>
+                                <th class="td-desc">Descripción</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Capacidad</th>
+                                <th>Precio (€)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(eventosPublicadosList)}">
+                                <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-light);">
+                                    No hay eventos publicados.
+                                </td>
+                            </tr>
+                            <tr th:each="evento : ${eventosPublicadosList}">
+                                <td th:text="${evento.id}">1</td>
+                                <td th:text="${evento.nombre}">Nombre</td>
+                                <td class="td-desc"
+                                    th:text="${#strings.length(evento.descripcion) > 50}
+                                              ? ${#strings.substring(evento.descripcion, 0, 50)} + '…'
+                                              : ${evento.descripcion}">Desc</td>
+                                <td th:text="${#temporals.format(evento.fechaInicio, 'dd/MM/yyyy HH:mm')}">—</td>
+                                <td th:text="${#temporals.format(evento.fechaFin, 'dd/MM/yyyy HH:mm')}">—</td>
+                                <td th:text="${evento.capacidad}">0</td>
+                                <td th:text="${#numbers.formatDecimal(evento.precio, 1, 2)}">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Panel: Entradas Vendidas -->
+            <div class="dashboard-tab-panel" id="tab-vendidas">
+                <div class="panel-header">
+                    <span class="panel-title">Entradas Vendidas</span>
+                    <span class="panel-count" th:text="${entradasVendidas} + ' entradas'">0 entradas</span>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Evento</th>
+                                <th>Asistente</th>
+                                <th class="td-desc">Email</th>
+                                <th>Fecha Compra</th>
+                                <th>Estado Entrada</th>
+                                <th>Estado Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(todasLasEntradas)}">
+                                <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-light);">
+                                    No hay entradas vendidas todavía.
+                                </td>
+                            </tr>
+                            <tr th:each="entrada : ${todasLasEntradas}">
+                                <td th:text="${entrada.id}">1</td>
+                                <td th:text="${entrada.asistente.evento.nombre}">Evento</td>
+                                <td th:text="${entrada.asistente.usuario.nombre}">Asistente</td>
+                                <td class="td-desc" th:text="${entrada.asistente.usuario.email}">email</td>
+                                <td th:text="${#temporals.format(entrada.compradaEn, 'dd/MM/yyyy HH:mm')}">—</td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="'status-' + ${#strings.toLowerCase(entrada.estado.name())}"
+                                          th:text="${entrada.estado.name() == 'ACTIVA'} ? 'Activa'
+                                                   : (${entrada.estado.name() == 'USADA'} ? 'Usada' : 'Cancelada')">Estado</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="'status-' + ${#strings.toLowerCase(entrada.estadoPago.name())}"
+                                          th:text="${entrada.estadoPago.name() == 'PAGADO'} ? 'Pagado' : 'Pendiente'">Pago</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Panel: Entradas Validadas -->
+            <div class="dashboard-tab-panel" id="tab-validadas">
+                <div class="panel-header">
+                    <span class="panel-title">Entradas Validadas</span>
+                    <span class="panel-count" th:text="${entradasUsadas} + ' entradas'">0 entradas</span>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Evento</th>
+                                <th>Asistente</th>
+                                <th class="td-desc">Email</th>
+                                <th>Fecha Compra</th>
+                                <th>Fecha Validación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(entradasValidadasList)}">
+                                <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-light);">
+                                    No hay entradas validadas todavía.
+                                </td>
+                            </tr>
+                            <tr th:each="entrada : ${entradasValidadasList}">
+                                <td th:text="${entrada.id}">1</td>
+                                <td th:text="${entrada.asistente.evento.nombre}">Evento</td>
+                                <td th:text="${entrada.asistente.usuario.nombre}">Asistente</td>
+                                <td class="td-desc" th:text="${entrada.asistente.usuario.email}">email</td>
+                                <td th:text="${#temporals.format(entrada.compradaEn, 'dd/MM/yyyy HH:mm')}">—</td>
+                                <td th:text="${entrada.usadaEn != null} ? ${#temporals.format(entrada.usadaEn, 'dd/MM/yyyy HH:mm')} : '—'">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div><!-- /dashboard-tables -->
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script>
+        function showDashTab(tabId) {
+            // Actualizar estado activo en tarjetas
+            document.querySelectorAll('.stat-card').forEach(function(card) {
+                card.classList.toggle('active', card.dataset.tab === tabId);
+            });
+
+            // Mostrar el panel correspondiente
+            document.querySelectorAll('.dashboard-tab-panel').forEach(function(panel) {
+                panel.classList.toggle('active', panel.id === 'tab-' + tabId);
+            });
+
+            // Desplazar suavemente hasta las tablas
+            document.querySelector('.dashboard-tables').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>

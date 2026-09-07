@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:allowBackup="true"
+        android:label="EventPass Validador"
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+        <activity
+            android:name=".PantallaQrActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PantallaClienteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PantallaEscanerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PantallaEventosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PantallaLoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

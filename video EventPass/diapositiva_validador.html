@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventPass – Rol Validador</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0f1e;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #091a1f 0%, #0a0f1e 70%);
+      overflow: hidden;
+    }
+
+    /* Fondo con puntos sutiles */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(0, 196, 180, 0.09) 1px, transparent 1px),
+        radial-gradient(circle, rgba(0, 196, 180, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px, 90px 90px;
+      background-position: 0 0, 30px 30px;
+    }
+
+    /* Línea de escaneo animada */
+    .scan-beam {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0,196,180,0.6), transparent);
+      animation: scanMove 4s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    @keyframes scanMove {
+      0%   { top: 15%; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { top: 85%; opacity: 0; }
+    }
+
+    /* Líneas decorativas superior/inferior */
+    .accent-line-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #006b64, #00c4b4, #5eeee4, #00c4b4, #006b64);
+    }
+
+    .accent-line-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #00c4b4, #006b64, #00c4b4);
+    }
+
+    /* Círculos decorativos de fondo */
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+    .circle-bg.c1 {
+      width: 700px; height: 700px;
+      background: #00c4b4;
+      opacity: 0.06;
+      top: -200px; left: -150px;
+    }
+    .circle-bg.c2 {
+      width: 500px; height: 500px;
+      background: #006b64;
+      opacity: 0.08;
+      bottom: -120px; right: -100px;
+    }
+    .circle-bg.c3 {
+      width: 280px; height: 280px;
+      background: #5eeee4;
+      opacity: 0.04;
+      top: 25%; left: 65%;
+    }
+
+    /* Contenido central */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3.2vh;
+      text-align: center;
+      padding: 0 6vw;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 0.5vh;
+    }
+
+    .logo-icon {
+      width: 64px;
+      height: 64px;
+      margin-right: 18px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-event { color: #2B5EA7; }
+    .logo-pass  { color: #4DBB5F; }
+
+    /* Etiqueta de rol */
+    .role-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5vh;
+    }
+
+    .role-line {
+      width: 50px;
+      height: 1px;
+      background: rgba(0, 196, 180, 0.4);
+    }
+
+    .role-tag {
+      font-size: clamp(11px, 1.1vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #00c4b4;
+    }
+
+    /* Separador */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #006b64, #5eeee4);
+      border-radius: 2px;
+      margin: 0 auto;
+    }
+
+    /* Texto principal */
+    .welcome-text {
+      font-size: clamp(20px, 2.6vw, 38px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.55;
+      max-width: 860px;
+      letter-spacing: 0.01em;
+    }
+
+    .welcome-text strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* Tarjetas de capacidades */
+    .caps {
+      display: flex;
+      gap: 16px;
+      margin-top: 0.5vh;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .cap-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 196, 180, 0.08);
+      border: 1px solid rgba(0, 196, 180, 0.22);
+      border-radius: 10px;
+      padding: 9px 18px;
+    }
+
+    .cap-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #00c4b4;
+      flex-shrink: 0;
+    }
+
+    .cap-text {
+      font-size: clamp(11px, 1vw, 15px);
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* Badge */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 196, 180, 0.1);
+      border: 1px solid rgba(0, 196, 180, 0.25);
+      border-radius: 100px;
+      padding: 10px 24px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00c4b4;
+      box-shadow: 0 0 8px #00c4b4;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    .badge-text {
+      font-size: clamp(12px, 1.2vw, 18px);
+      color: rgba(255,255,255,0.55);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Icono decorativo: móvil escaneando QR */
+    .deco-icon {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      opacity: 0.07;
+    }
+
+    /* Crédito */
+    .credit {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 0.9vw, 14px);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="accent-line-top"></div>
+    <div class="accent-line-bottom"></div>
+    <div class="scan-beam"></div>
+
+    <div class="circle-bg c1"></div>
+    <div class="circle-bg c2"></div>
+    <div class="circle-bg c3"></div>
+
+    <!-- Icono decorativo: móvil apuntando a QR -->
+    <svg class="deco-icon" width="200" height="220" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- cuerpo del móvil -->
+      <rect x="22" y="4" width="36" height="62" rx="6" stroke="white" stroke-width="3"/>
+      <!-- pantalla -->
+      <rect x="26" y="10" width="28" height="44" rx="3" fill="white" opacity="0.12"/>
+      <!-- botón home -->
+      <circle cx="40" cy="58" r="3" stroke="white" stroke-width="2" opacity="0.6"/>
+      <!-- QR en pantalla -->
+      <rect x="30" y="14" width="8"  height="8"  rx="1.5" fill="white" opacity="0.6"/>
+      <rect x="42" y="14" width="8"  height="8"  rx="1.5" fill="white" opacity="0.6"/>
+      <rect x="30" y="26" width="8"  height="8"  rx="1.5" fill="white" opacity="0.6"/>
+      <rect x="42" y="26" width="4"  height="4"  fill="white" opacity="0.6"/>
+      <rect x="48" y="26" width="4"  height="4"  fill="white" opacity="0.6"/>
+      <rect x="42" y="32" width="8"  height="4"  fill="white" opacity="0.4"/>
+      <!-- línea de escaneo sobre la pantalla -->
+      <line x1="26" y1="34" x2="54" y2="34" stroke="white" stroke-width="1.5" opacity="0.9"/>
+      <!-- checkmark debajo del móvil -->
+      <circle cx="40" cy="78" r="8" stroke="white" stroke-width="2.5" opacity="0.7"/>
+      <polyline points="35,78 39,82 46,74" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+    </svg>
+
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0d1b3e"/>
+          <rect x="8"  y="8"  width="20" height="20" rx="4" fill="#2B5EA7"/>
+          <rect x="36" y="8"  width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="8"  y="36" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="36" y="36" width="20" height="20" rx="4" fill="#4DBB5F"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-event">Event</span><span class="logo-pass">Pass</span>
+        </div>
+      </div>
+
+      <!-- Etiqueta rol -->
+      <div class="role-label">
+        <div class="role-line"></div>
+        <span class="role-tag">Rol · Validador</span>
+        <div class="role-line"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texto principal -->
+      <p class="welcome-text">
+        El <strong>validador</strong> escanea los códigos QR<br>
+        en la entrada y confirma el acceso<br>
+        en <strong>tiempo real</strong>.
+      </p>
+
+      <!-- Capacidades -->
+      <div class="caps">
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Escanear QR con Android</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Verificar entradas</span></div>
+        <div class="cap-item"><div class="cap-dot"></div><span class="cap-text">Control de acceso</span></div>
+      </div>
+
+      <!-- Badge -->
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Validación en puerta · EventPass</span>
+      </div>
+    </div>
+
+    <div class="credit">IES Palomeras-Vallecas · DAM 2026 · Alejandro &amp; Jeddy</div>
+  </div>
+</body>
+</html>

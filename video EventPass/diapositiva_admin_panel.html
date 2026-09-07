@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventPass – Panel de Control Admin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0f1e;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #0c1a3a 0%, #0a0f1e 70%);
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(43, 94, 167, 0.09) 1px, transparent 1px),
+        radial-gradient(circle, rgba(43, 94, 167, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px, 90px 90px;
+      background-position: 0 0, 30px 30px;
+    }
+
+    .accent-line-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1a3d7a, #2B5EA7, #4a90d9, #2B5EA7, #1a3d7a);
+      z-index: 3;
+    }
+
+    .accent-line-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #2B5EA7, #1a3d7a, #2B5EA7);
+      z-index: 3;
+    }
+
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+    .circle-bg.c1 {
+      width: 700px; height: 700px;
+      background: #2B5EA7;
+      opacity: 0.07;
+      top: -200px; left: -150px;
+    }
+    .circle-bg.c2 {
+      width: 500px; height: 500px;
+      background: #1a3d7a;
+      opacity: 0.08;
+      bottom: -120px; right: -100px;
+    }
+    .circle-bg.c3 {
+      width: 280px; height: 280px;
+      background: #4DBB5F;
+      opacity: 0.04;
+      top: 20%; left: 68%;
+    }
+
+    /* Contenido central */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.6vh;
+      text-align: center;
+      padding: 0 5vw;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.2vh;
+    }
+
+    .logo-icon {
+      width: 56px;
+      height: 56px;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: clamp(44px, 6vw, 84px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-event { color: #2B5EA7; }
+    .logo-pass  { color: #4DBB5F; }
+
+    /* Etiqueta de escena */
+    .role-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.2vh;
+    }
+
+    .role-line {
+      width: 50px;
+      height: 1px;
+      background: rgba(43, 94, 167, 0.5);
+    }
+
+    .role-tag {
+      font-size: clamp(11px, 1.1vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #4a90d9;
+    }
+
+    /* Separador */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #1a3d7a, #4a90d9);
+      border-radius: 2px;
+    }
+
+    /* Texto principal */
+    .welcome-text {
+      font-size: clamp(18px, 2.3vw, 34px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.5;
+      max-width: 860px;
+      letter-spacing: 0.01em;
+    }
+
+    .welcome-text strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* ── TARJETAS DE MÉTRICAS ── */
+    .metrics {
+      display: flex;
+      gap: 18px;
+      margin-top: 0.4vh;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .metric-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px;
+      padding: 16px 22px;
+      min-width: 160px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    /* barra de color superior de cada tarjeta */
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .metric-card.eventos::before  { background: #4a90d9; }
+    .metric-card.vendidas::before { background: #4DBB5F; }
+    .metric-card.validadas::before{ background: #00c4b4; }
+
+    .metric-icon {
+      margin-bottom: 2px;
+      opacity: 0.7;
+    }
+
+    .metric-value {
+      font-size: clamp(28px, 3.2vw, 48px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .metric-card.eventos  .metric-value { color: #4a90d9; }
+    .metric-card.vendidas .metric-value { color: #4DBB5F; }
+    .metric-card.validadas .metric-value{ color: #00c4b4; }
+
+    /* animación de conteo */
+    .metric-card.eventos  .metric-value { animation: countUp3  2s ease forwards; }
+    .metric-card.vendidas .metric-value { animation: countUp12 2.2s ease forwards; }
+    .metric-card.validadas .metric-value{ animation: countUp8  2.4s ease forwards; }
+
+    @keyframes countUp3  {
+      0%   { opacity: 0; transform: translateY(8px); }
+      40%  { opacity: 1; }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes countUp12 {
+      0%   { opacity: 0; transform: translateY(8px); }
+      45%  { opacity: 1; }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes countUp8 {
+      0%   { opacity: 0; transform: translateY(8px); }
+      50%  { opacity: 1; }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .metric-label {
+      font-size: clamp(10px, 0.95vw, 14px);
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* barra de progreso mini */
+    .metric-bar-wrap {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .metric-bar {
+      height: 100%;
+      border-radius: 4px;
+      animation: barGrow 1.8s ease forwards;
+    }
+
+    .metric-card.eventos  .metric-bar { background: #4a90d9; width: 45%; }
+    .metric-card.vendidas .metric-bar { background: #4DBB5F; width: 78%; }
+    .metric-card.validadas .metric-bar { background: #00c4b4; width: 62%; }
+
+    @keyframes barGrow {
+      from { transform: scaleX(0); transform-origin: left; }
+      to   { transform: scaleX(1); transform-origin: left; }
+    }
+
+    /* Badge */
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(43, 94, 167, 0.12);
+      border: 1px solid rgba(43, 94, 167, 0.3);
+      border-radius: 100px;
+      padding: 10px 24px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4a90d9;
+      box-shadow: 0 0 8px #4a90d9;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    .badge-text {
+      font-size: clamp(12px, 1.2vw, 18px);
+      color: rgba(255,255,255,0.5);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Icono decorativo: rejilla de dashboard */
+    .deco-icon {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      opacity: 0.06;
+    }
+
+    /* Crédito */
+    .credit {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 0.9vw, 14px);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="accent-line-top"></div>
+    <div class="accent-line-bottom"></div>
+
+    <div class="circle-bg c1"></div>
+    <div class="circle-bg c2"></div>
+    <div class="circle-bg c3"></div>
+
+    <!-- Icono decorativo: dashboard con barras -->
+    <svg class="deco-icon" width="210" height="210" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="6" width="88" height="88" rx="10" stroke="white" stroke-width="3"/>
+      <line x1="6" y1="26" x2="94" y2="26" stroke="white" stroke-width="2" opacity="0.5"/>
+      <!-- tarjetas métricas -->
+      <rect x="14" y="34" width="20" height="16" rx="3" fill="white" opacity="0.5"/>
+      <rect x="40" y="34" width="20" height="16" rx="3" fill="white" opacity="0.7"/>
+      <rect x="66" y="34" width="20" height="16" rx="3" fill="white" opacity="0.4"/>
+      <!-- barras gráfica -->
+      <rect x="16" y="72" width="8" height="16" rx="2" fill="white" opacity="0.4"/>
+      <rect x="28" y="62" width="8" height="26" rx="2" fill="white" opacity="0.6"/>
+      <rect x="40" y="66" width="8" height="22" rx="2" fill="white" opacity="0.5"/>
+      <rect x="52" y="56" width="8" height="32" rx="2" fill="white" opacity="0.8"/>
+      <rect x="64" y="68" width="8" height="20" rx="2" fill="white" opacity="0.4"/>
+      <rect x="76" y="60" width="8" height="28" rx="2" fill="white" opacity="0.6"/>
+    </svg>
+
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#0d1b3e"/>
+          <rect x="8"  y="8"  width="20" height="20" rx="4" fill="#2B5EA7"/>
+          <rect x="36" y="8"  width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="8"  y="36" width="20" height="20" rx="4" fill="#2B5EA7" opacity="0.6"/>
+          <rect x="36" y="36" width="20" height="20" rx="4" fill="#4DBB5F"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-event">Event</span><span class="logo-pass">Pass</span>
+        </div>
+      </div>
+
+      <!-- Etiqueta escena -->
+      <div class="role-label">
+        <div class="role-line"></div>
+        <span class="role-tag">Admin · Panel de Control</span>
+        <div class="role-line"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texto principal -->
+      <p class="welcome-text">
+        El administrador consulta <strong>eventos publicados</strong>,<br>
+        entradas vendidas y accesos <strong>validados</strong> en tiempo real.
+      </p>
+
+      <!-- Tarjetas de métricas -->
+      <div class="metrics">
+
+        <div class="metric-card eventos">
+          <!-- icono calendario -->
+          <svg class="metric-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="1.5" y="3" width="15" height="13.5" rx="2.5" stroke="#4a90d9" stroke-width="1.6"/>
+            <line x1="1.5" y1="7" x2="16.5" y2="7" stroke="#4a90d9" stroke-width="1.6"/>
+            <line x1="5.5" y1="1.5" x2="5.5" y2="4.5" stroke="#4a90d9" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="12.5" y1="1.5" x2="12.5" y2="4.5" stroke="#4a90d9" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <div class="metric-value">3</div>
+          <div class="metric-label">Eventos publicados</div>
+          <div class="metric-bar-wrap"><div class="metric-bar"></div></div>
+        </div>
+
+        <div class="metric-card vendidas">
+          <!-- icono ticket -->
+          <svg class="metric-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="1.5" y="4.5" width="15" height="9" rx="2" stroke="#4DBB5F" stroke-width="1.6"/>
+            <line x1="11.5" y1="4.5" x2="11.5" y2="13.5" stroke="#4DBB5F" stroke-width="1.4" stroke-dasharray="2 2"/>
+          </svg>
+          <div class="metric-value">124</div>
+          <div class="metric-label">Entradas vendidas</div>
+          <div class="metric-bar-wrap"><div class="metric-bar"></div></div>
+        </div>
+
+        <div class="metric-card validadas">
+          <!-- icono check -->
+          <svg class="metric-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7.5" stroke="#00c4b4" stroke-width="1.6"/>
+            <polyline points="5.5,9.5 8,12 12.5,6.5" stroke="#00c4b4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="metric-value">87</div>
+          <div class="metric-label">Entradas validadas</div>
+          <div class="metric-bar-wrap"><div class="metric-bar"></div></div>
+        </div>
+
+      </div>
+
+      <!-- Badge -->
+      <div class="badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Panel de administración · EventPass</span>
+      </div>
+    </div>
+
+    <div class="credit">IES Palomeras-Vallecas · DAM 2026 · Alejandro &amp; Jeddy</div>
+  </div>
+</body>
+</html>

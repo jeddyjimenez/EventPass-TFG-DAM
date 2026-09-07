@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar evento</title>
+</head>
+<body>
+    <h1>Editar evento</h1>
+    <form method="post" th:action="@{/admin/eventos/{id}(id=${evento.id})}" th:object="${evento}">
+        <input th:field="*{nombre}" placeholder="Nombre" required>
+        <input th:field="*{descripcion}" placeholder="Descripción" required>
+        <input th:field="*{ubicacion}" placeholder="Ubicación" required>
+        <input th:field="*{fechaInicio}" type="datetime-local" required>
+        <input th:field="*{fechaFin}" type="datetime-local" required>
+        <input th:field="*{capacidad}" type="number" min="1" required>
+
+        <label for="validadoresIds">Validadores asignados</label>
+        <select id="validadoresIds" name="validadoresIds" multiple size="6">
+            <option th:each="validador : ${validadoresDisponibles}"
+                    th:value="${validador.id}"
+                    th:selected="${#lists.contains(validadoresSeleccionadosIds, validador.id)}"
+                    th:text="${validador.nombre + ' (' + validador.email + ')'}">
+            </option>
+        </select>
+        <button type="submit">Guardar cambios</button>
+    </form>
+</body>
+</html>
