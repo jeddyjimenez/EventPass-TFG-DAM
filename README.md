@@ -104,3 +104,40 @@ EventPass-TFG-DAM/
 ├── video EventPass/  # Recursos utilizados para la presentación
 ├── .gitignore
 └── README.md
+
+
+## 📸 Capturas de la aplicación
+
+A continuación se muestran algunas de las principales interfaces desarrolladas para EventPass.
+
+### 🏠 Página principal
+
+![Página principal de EventPass](docs/images/Página-principal-EventPass.png)
+
+### 👨‍💼 Panel de administración
+
+![Panel de administración de EventPass](docs/images/Panel-administrador.png)
+
+### 🎫 Creación de eventos
+
+![Crear nuevo evento](docs/images/Crear-nuevo-evento.png)
+
+### 📋 Panel de control
+
+![Panel de control de EventPass](docs/images/Panel-control.png)
+
+### 📱 Aplicación Android
+
+![Aplicación Android de EventPass](docs/images/Aplicación-Android.png)
+
+### 📅 Eventos asignados
+
+![Mis eventos](docs/images/Mis-eventos.png)
+
+### 📷 Validador QR
+
+![Validador QR de EventPass](docs/images/Validador-QR.png)
+
+### ✅ Entrada mediante código QR
+
+![Entrada QR de EventPass](docs/images/Entrada-QR.png)
