@@ -36,6 +36,7 @@ Cuando se escanea una entrada, la aplicación consulta el backend para comprobar
 ## 🛠️ Tecnologías utilizadas
 
 ### Backend
+
 - Java
 - Spring Boot
 - Spring Security
@@ -45,21 +46,25 @@ Cuando se escanea una entrada, la aplicación consulta el backend para comprobar
 - API REST
 
 ### Frontend web
+
 - HTML5
 - CSS3
 - Thymeleaf
 
 ### Aplicación móvil
+
 - Android
 - Java
 - XML
 - Retrofit
 
 ### Base de datos
+
 - PostgreSQL
 - Supabase
 
 ### Servicios e infraestructura
+
 - Railway
 - GitHub
 - Stripe
@@ -102,9 +107,11 @@ EventPass-TFG-DAM/
 ├── eventosmobile/    # Aplicación Android
 ├── diagramas jeddy/  # Diagramas y documentación técnica
 ├── video EventPass/  # Recursos utilizados para la presentación
+├── docs/
+│   └── images/       # Capturas de la aplicación
 ├── .gitignore
 └── README.md
-
+```
 
 ## 📸 Capturas de la aplicación
 
